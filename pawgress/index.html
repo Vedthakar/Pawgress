@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <body>
+    <h1>WS Transcription Test</h1>
+    <button id="start">Start</button>
+    <button id="stop">Stop</button>
+    <pre id="log"></pre>
+    <script>
+      const log = m => document.getElementById('log').textContent += m + "\n";
+      const ws = new WebSocket("ws://localhost:8080/ws/transcription/");
+      let interval;
+
+      ws.onopen = () => log("WS open");
+      ws.onclose = e => log("WS close code=" + e.code);
+      ws.onmessage = e => log("RX: " + e.data);
+
+      document.getElementById('start').onclick = () => {
+        ws.send(JSON.stringify({type: "toggle_transcription"})); // tell backend to start
+        // send fake audio (zeros) so your buffer code runs
+        interval = setInterval(() => {
+          const bytes = new Uint8Array(320); // ~10–20ms chunk of "audio"
+          ws.send(bytes);
+        }, 50);
+      };
+
+      document.getElementById('stop').onclick = () => {
+        clearInterval(interval);
+        ws.send(JSON.stringify({type: "toggle_transcription"})); // tell backend to stop
+      };
+    </script>
+  </body>
+</html>

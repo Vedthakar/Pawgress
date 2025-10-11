@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>STT Test</title></head>
+  <body>
+    <h1>Upload or URL → /stt/api/</h1>
+
+    <form id="fileForm" enctype="multipart/form-data">
+      <input type="file" name="file" accept="audio/*" />
+      <input type="hidden" name="features" value='{"smart_format": true, "punctuate": true}' />
+      <button type="submit">Transcribe File</button>
+    </form>
+
+    <hr/>
+
+    <form id="urlForm">
+      <input type="text" name="url" placeholder="https://example.com/audio.mp3" style="width:420px"/>
+      <input type="hidden" name="features" value='{"smart_format": true, "punctuate": true}' />
+      <button type="submit">Transcribe URL</button>
+    </form>
+
+    <pre id="out"></pre>
+
+    <script>
+      const out = document.getElementById('out');
+
+      async function postForm(form, endpoint) {
+        const body = new FormData(form);
+        const res = await fetch(endpoint, { method: 'POST', body });
+        const text = await res.text();
+        try { out.textContent = JSON.parse(text, null, 2); }
+        catch { out.textContent = text; }
+      }
+
+      document.getElementById('fileForm').addEventListener('submit', e => {
+        e.preventDefault();
+        postForm(e.target, '/stt/api/');
+      });
+
+      document.getElementById('urlForm').addEventListener('submit', e => {
+        e.preventDefault();
+        postForm(e.target, '/stt/api/');
+      });
+    </script>
+  </body>
+</html>
