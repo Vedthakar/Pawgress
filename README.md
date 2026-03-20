@@ -13,7 +13,7 @@ What makes Pawgress different is that productivity is tied to caring for a virtu
 ![resources](./ss/sign.png)
 
 ### Tasks
-![overwhlemed](./ss/Tasks.png)
+![overwhlemed](./ss/tasks.png)
 
 ## What Makes Pawgress Different
 
