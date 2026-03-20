@@ -9,8 +9,9 @@ import SwiftUI
 
 struct HomePageView: View {
     @State private var hearts: [HeartAnimation] = []
-    @State private var hunger: Double = 0 //TODO: View model
-    @State private var water: Double = 0 //TODO: View model
+    @State private var hunger: Double = 0
+    @State private var water: Double = 0
+    @State private var navigateToTasks = false
     var body: some View {
         VStack {
             //MARK: Image of pet
@@ -76,26 +77,10 @@ struct HomePageView: View {
             )
             .padding(.horizontal, 30)
             
-            //MARK: Buttons to navigate to study & automate task
-            //TODO: Route to page soon, create those pages
             HStack(alignment: .center, spacing: 10) {
-                IconButton(action: {print("Balls")}, text: "tasks", image: .pawgressTasks)
-                IconButton(action: {print("Balls")}, text: "study", image: .pawgressStudy)
+                IconButton(action: { navigateToTasks = true }, text: "tasks", image: .pawgressTasks)
             }
             .padding(20)
-        
-                
-            //MARK: Testing only
-            HStack {
-                Text("sliders for testing only")
-                Slider(value: $hunger, in: 0...1)
-                    .frame(width: 50, height: 10)
-                Slider(value: $water, in: 0...1)
-                    .frame(width: 50, height: 10)
-            }
-           
-                
-        
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
@@ -124,11 +109,13 @@ struct HomePageView: View {
             NavTitleView()
         }
         .navigationBarHidden(true)
+        .navigationDestination(isPresented: $navigateToTasks) {
+            TaskListView()
+        }
 
         
     }
     
-    //TODO: Remove from here
     private func showHearts() {
         let heartCount = Int.random(in: 5...8)
         

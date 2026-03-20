@@ -34,7 +34,6 @@ struct LabeledTextField: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            //TODO: Add error handling (i.e. char count)
             Text(label)
                 .font(.Pixel(.callout).bold())
                 .foregroundStyle(Color.oliveGold)

@@ -8,52 +8,57 @@
 import SwiftUI
 
 struct LandingPage: View {
-    @State private var animate = false
-    @State private var navigateToHome = false
+    @State private var navigateToLogin = false
+    @State private var navigateToRegister = false
     
     var body: some View {
-
         NavigationStack {
-                   ZStack {
-                       //MARK: Add background!
-                   VStack(spacing: 20) {
-                       Spacer()
-                       Spacer()
-                       
-                       Image(.pawgressLogo)
-                           .resizable()
-                           .frame(width: 250, height: 250)
-                           
-                       Spacer()
-                       //Animated text
-                       AnimatedTextView(animate: $animate)
-                       
-                   }
-               
-               }
-               .safeAreaInset(edge: .bottom) {
-                   TextBtn(action: {navigateToHome = true}, text: "Get Started")
-               }
-               .navigationDestination(isPresented: $navigateToHome) {
-                  LoginPageView()
-                       .navigationBarBackButtonHidden(true)
-               }
-               .frame(maxWidth: .infinity, maxHeight: .infinity)
-               .background(
-                   Color.lightCream
-                       .ignoresSafeArea()
-               )
-               .navigationBarHidden(true)
-               }
+            ZStack {
+                VStack(spacing: 20) {
+                    Spacer()
+                    Spacer()
+
+                    Image(.pawgressLogo)
+                        .resizable()
+                        .frame(width: 250, height: 250)
+
+                    Spacer()
+                    AnimatedTextView()
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 0) {
+                    TextBtn(action: { navigateToLogin = true }, text: "Get Started")
+
+                    Button("Create an Account") {
+                        navigateToRegister = true
+                    }
+                    .font(.DMSans(.body))
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color.coralPink)
+                    .padding(.bottom, 16)
+                }
+            }
+            .navigationDestination(isPresented: $navigateToLogin) {
+                LoginPageView()
+                    .navigationBarBackButtonHidden(true)
+            }
+            .navigationDestination(isPresented: $navigateToRegister) {
+                RegisterPageView()
+                    .navigationBarBackButtonHidden(true)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(
+                Color.lightCream
+                    .ignoresSafeArea()
+            )
+            .navigationBarHidden(true)
+        }
     }
 }
 
 
-
-//MARK: Animated 'highlight' text
 private struct AnimatedTextView: View {
-    @Binding var animate: Bool
-
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             TypewriterText(text: "pawgress", speed: 0.30)

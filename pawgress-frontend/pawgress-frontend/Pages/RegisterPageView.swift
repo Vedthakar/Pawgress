@@ -8,12 +8,9 @@
 import SwiftUI
 
 struct RegisterPageView: View {
-//    @State private var email: String = ""
-//    @State private var username: String = ""
-//    @State private var password: String = ""
-//    @State private var confirmPassword: String = ""
-//    @State private var isChecked: Bool = false
-    @ObservedObject private var registerVM = RegisterViewModel()
+    @StateObject private var registerVM = RegisterViewModel()
+    @State private var navigateToHome = false
+    @State private var navigateToLogin = false
 
     var body: some View {
         ScrollView {
@@ -59,6 +56,10 @@ struct RegisterPageView: View {
                         ErrorMessage(label:passwordError)
                     }
                     
+                    if let error = registerVM.error {
+                        ErrorMessage(label:error)
+                    }
+                    
                     
                     Toggle(isOn: $registerVM.isChecked) {
                         Text("I agree to take care of my pet!")
@@ -86,26 +87,25 @@ struct RegisterPageView: View {
                 )
                 .padding(.horizontal, 25)
                 
-                
                 TextBtn(action: {
-                    // First validate all fields
-                    //TODO: Move ts shit
-                    registerVM.printVal()
                     if registerVM.validateAll() {
                         Task {
                             do {
-                                let result = try await registerVM.registerUser()
-                                print("Registration success:", result.msg)
+                                _ = try await registerVM.registerUser()
+                                navigateToHome = true
                             } catch {
-                                print("Registration failed:", error.localizedDescription)
+                                registerVM.error = error.localizedDescription
                             }
                         }
-                    } else {
-                        print("Validation failed")
                     }
                 }, text: "Register")
 
-                Text("Want to sign in?")
+                Button("Sign In Instead") {
+                    navigateToLogin = true
+                }
+                .font(.DMSans(.body))
+                .fontWeight(.bold)
+                .foregroundStyle(Color.coralPink)
                 
                 
             }
@@ -121,6 +121,13 @@ struct RegisterPageView: View {
             NavTitleView()
         }
         .navigationBarHidden(true)
+        .navigationDestination(isPresented: $navigateToHome) {
+            HomePageView()
+                .navigationBarBackButtonHidden(true)
+        }
+        .navigationDestination(isPresented: $navigateToLogin) {
+            LoginPageView()
+        }
         
     }
 }

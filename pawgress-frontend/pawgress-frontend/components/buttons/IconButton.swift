@@ -42,5 +42,5 @@ struct IconButton: View {
 }
 
 #Preview {
-    IconButton(action: {print("balls")})
+    IconButton(action: {})
 }

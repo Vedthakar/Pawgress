@@ -30,14 +30,14 @@ class UserLoginView(APIView):
   def post(self, request, format=None):
     serializer = UserLoginSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    email = serializer.data.get('email')
-    password = serializer.data.get('password')
+    email = serializer.validated_data.get('email')
+    password = serializer.validated_data.get('password')
     user = authenticate(email=email, password=password)
     if user is not None:
       token = get_tokens_for_user(user)
       return Response({'token':token,'msg':'Login Success'}, status=status.HTTP_200_OK)
     else:
-      return Response({'errors':{'non_field_errors':['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
+      return Response({'errors':{'non_field_errors':['Email or Password is not Valid']}}, status=status.HTTP_401_UNAUTHORIZED)
     
 
 class UserProfileView(APIView):
@@ -59,9 +59,15 @@ class UserChangePasswordView(APIView):
 class SendPasswordResetEmailView(APIView):
   renderer_classes = [UserRenderer]
   def post(self, request, format=None):
-    serializer = SendPasswordResetEmailSerializer(data=request.data)
+    serializer = SendPasswordResetEmailSerializer(
+      data=request.data,
+      context={'request': request},
+    )
     serializer.is_valid(raise_exception=True)
-    return Response({'msg':'Password Reset link send. Please check your Email'}, status=status.HTTP_200_OK)
+    return Response(
+      {'msg':'If an account exists for that email, a password reset link has been sent.'},
+      status=status.HTTP_200_OK,
+    )
 
 class UserPasswordResetView(APIView):
   renderer_classes = [UserRenderer]

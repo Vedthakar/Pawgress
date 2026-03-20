@@ -8,12 +8,9 @@
 import SwiftUI
 
 struct LoginPageView: View {
-    //    @State private var email: String = ""
-    //    @State private var username: String = ""
-    //    @State private var password: String = ""
-    //    @State private var confirmPassword: String = ""
-    //    @State private var isChecked: Bool = false
-    @ObservedObject private var loginVM = LoginViewModel()
+    @StateObject private var loginVM = LoginViewModel()
+    @State private var navigateToHome = false
+    @State private var navigateToRegister = false
     
     var body: some View {
         ScrollView {
@@ -50,22 +47,23 @@ struct LoginPageView: View {
                 
                 
                 TextBtn(action: {
-                    print(loginVM.email)
-                    print(loginVM.password)
-                    // First validate all fields
-                    //TODO: Move ts shit
                     Task {
                         do {
-                            let result = try await loginVM.loginUser()
-                            print("Registration success:", result.msg)
+                            _ = try await loginVM.loginUser()
+                            navigateToHome = true
                         } catch {
-                            print("Registration failed:", error.localizedDescription)
+                            loginVM.error = error.localizedDescription
                         }
                     }
                 }
                 , text: "Login")
                 
-                Text("Want to register?")
+                Button("Create an Account") {
+                    navigateToRegister = true
+                }
+                .font(.DMSans(.body))
+                .fontWeight(.bold)
+                .foregroundStyle(Color.coralPink)
 
             }
             
@@ -81,6 +79,13 @@ struct LoginPageView: View {
             NavTitleView()
         }
         .navigationBarHidden(true)
+        .navigationDestination(isPresented: $navigateToHome) {
+            HomePageView()
+                .navigationBarBackButtonHidden(true)
+        }
+        .navigationDestination(isPresented: $navigateToRegister) {
+            RegisterPageView()
+        }
     }
 }
 
